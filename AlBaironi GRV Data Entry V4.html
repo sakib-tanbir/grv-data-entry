@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al Baironi Trading – Goods Return Voucher</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --primary:#1a3a5c; --primary-light:#e8f0f8; --primary-mid:#2d5a8e;
+  --accent:#c8860a; --accent-light:#fef6e4;
+  --danger:#c0392b; --danger-light:#fdecea;
+  --success:#1e7e34; --success-light:#e8f5ea;
+  --warn:#e67e22; --warn-light:#fef0e0;
+  --border:#d0d9e4; --bg:#f0f3f8;
+  --white:#ffffff; --text:#1a2636; --muted:#6b7c93;
+  --radius:6px; --shadow:0 1px 4px rgba(26,58,92,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
+
+/* HEADER */
+.app-header{background:var(--primary);color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.logo-block .logo{font-size:16px;font-weight:700;letter-spacing:0.5px;}
+.logo-block .logo span{color:#f0c040;}
+.logo-block .sub{font-size:10px;color:#b0c4de;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.file-status{font-size:11px;color:#b0c4de;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.btn-load-label{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.btn-load-label:hover{background:#a06a08;}
+
+/* MAIN */
+.main{max-width:1320px;margin:0 auto;padding:14px 16px;}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;}
+.card-header{background:var(--primary);color:#fff;padding:7px 14px;border-radius:var(--radius) var(--radius) 0 0;font-weight:600;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.card-body{padding:12px 14px;}
+
+/* FORM GRID */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.fg2{grid-column:span 2;}
+.fg3{grid-column:span 3;}
+.form-group{display:flex;flex-direction:column;gap:3px;}
+.form-group label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+.form-group input,.form-group select{border:1px solid var(--border);border-radius:var(--radius);padding:5px 9px;font-size:13px;color:var(--text);background:#fff;height:30px;transition:border 0.15s;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary-mid);box-shadow:0 0 0 2px rgba(45,90,142,0.12);}
+.form-group input[readonly]{background:var(--bg);color:var(--muted);}
+.grv-no-field{font-weight:700;color:var(--primary);font-size:15px;background:var(--primary-light) !important;color:var(--primary) !important;border-color:var(--primary-mid) !important;}
+
+/* SCAN BAR */
+.scan-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;background:var(--primary-light);padding:8px 10px;border-radius:var(--radius);border:1px solid var(--border);}
+.scan-bar input{flex:1;height:34px;border:2px solid var(--accent);border-radius:var(--radius);padding:0 12px;font-size:13px;}
+.scan-bar input:focus{outline:none;border-color:var(--primary);}
+.btn{border:none;border-radius:var(--radius);padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;height:30px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-sm{height:26px;padding:3px 10px;font-size:11px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:#0f2540;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-accent:hover{background:#a06a08;}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{background:#145a24;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#962d22;}
+.btn-outline{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn-outline:hover{background:var(--primary-light);}
+.btn:disabled{opacity:0.45;cursor:not-allowed;}
+
+/* LINE ITEMS TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);}
+.grv-table{width:100%;border-collapse:collapse;font-size:12px;min-width:960px;}
+.grv-table thead th{background:var(--primary);color:#fff;padding:7px 7px;text-align:left;white-space:nowrap;font-size:11px;font-weight:600;border-right:1px solid rgba(255,255,255,0.1);}
+.grv-table thead th:last-child{border-right:none;}
+.grv-table tbody td{padding:4px 5px;border-bottom:1px solid #e8edf4;vertical-align:middle;}
+.grv-table tbody tr:nth-child(even) td{background:#f8fafd;}
+.grv-table tbody tr:hover td{background:var(--primary-light);}
+.grv-table input,.grv-table select{border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:12px;width:100%;height:27px;background:#fff;}
+.grv-table input:focus,.grv-table select:focus{outline:none;border-color:var(--primary-mid);}
+.grv-table input[readonly]{background:#f0f4f8;color:var(--muted);}
+.grv-table .cell-sku input{font-weight:700;color:var(--primary);background:var(--primary-light);}
+.grv-table .cell-inv input{font-weight:700;color:var(--primary-mid);background:#f0f7ff;}
+.grv-table .cell-over input{border-color:var(--danger) !important;background:var(--danger-light) !important;}
+.grv-table .cell-expired input{border-color:var(--danger);background:var(--danger-light);color:var(--danger);font-weight:700;}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--danger);font-size:15px;padding:2px 5px;line-height:1;}
+.del-btn:hover{color:#8b0000;}
+.row-num{color:var(--muted);font-weight:700;text-align:center;width:26px;font-size:11px;}
+
+/* BADGES */
+.badge{display:inline-block;padding:1px 7px;border-radius:9px;font-size:10px;font-weight:700;letter-spacing:0.2px;vertical-align:middle;}
+.badge-exp{background:var(--danger-light);color:var(--danger);}
+.badge-ok{background:var(--success-light);color:var(--success);}
+.badge-warn{background:var(--warn-light);color:var(--warn);}
+
+/* INV PICKER CELL */
+.inv-cell{display:flex;align-items:center;gap:4px;}
+.inv-cell input{flex:1;}
+
+/* SUMMARY BAR */
+.summary-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.sum-item{background:var(--primary-light);border-radius:var(--radius);padding:5px 12px;font-size:12px;border:1px solid #c5d8ef;}
+.sum-item strong{color:var(--primary);}
+
+/* ACTION BAR */
+.action-bar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding:6px 0 8px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(8,18,36,0.6);z-index:1000;display:flex;align-items:center;justify-content:center;}
+.modal{background:#fff;border-radius:8px;box-shadow:0 8px 36px rgba(0,0,0,0.25);width:880px;max-width:97vw;max-height:82vh;display:flex;flex-direction:column;}
+.modal-header{background:var(--primary);color:#fff;padding:11px 18px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;}
+.modal-close{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;}
+.modal-body{overflow-y:auto;padding:14px 16px;flex:1;}
+.modal-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+.inv-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.inv-tbl th{background:var(--primary-light);color:var(--primary);padding:7px 9px;text-align:left;font-weight:700;font-size:11px;position:sticky;top:0;border-bottom:2px solid var(--border);}
+.inv-tbl td{padding:7px 9px;border-bottom:1px solid #e8edf4;}
+.inv-tbl tr:hover td{background:var(--accent-light);cursor:pointer;}
+.inv-tbl tr.sel td{background:var(--primary-light);font-weight:600;}
+.modal-info{font-size:12px;color:var(--muted);margin-bottom:8px;padding:6px 10px;background:var(--primary-light);border-radius:var(--radius);}
+
+/* TOAST */
+.toast-wrap{position:fixed;top:62px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:7px;}
+.toast{padding:9px 16px;border-radius:var(--radius);font-size:12px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.18);animation:toastIn 0.2s;min-width:260px;max-width:380px;}
+.toast-success{background:var(--success);color:#fff;}
+.toast-error{background:var(--danger);color:#fff;}
+.toast-info{background:var(--primary);color:#fff;}
+.toast-warn{background:var(--warn);color:#fff;}
+@keyframes toastIn{from{transform:translateX(50px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* NO DATA */
+.no-data{text-align:center;padding:28px;color:var(--muted);font-size:13px;}
+
+/* PRINT */
+@media print{
+  @page { size: A4 landscape; margin: 10mm; }
+  .no-print{display:none !important;}
+  body{background:#fff;font-size:11px;}
+  .app-header,.card-header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .grv-table thead{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .card{box-shadow:none;border:1px solid #ccc;margin-bottom:6px;break-inside:avoid;}
+  .tbl-wrap{overflow:visible !important;}
+  .grv-table{table-layout:fixed;width:100%;font-size:10px;}
+  .grv-table th,.grv-table td{padding:4px 4px;overflow:hidden;}
+  .grv-table input,.grv-table select{
+    border:none !important;background:transparent !important;
+    padding:0 !important;height:auto !important;
+    color:#000 !important;font-size:10px;width:100% !important;
+    -webkit-appearance:none;appearance:none;
+  }
+  .grv-table select{pointer-events:none;}
+  .del-btn,.inv-cell button,.scan-bar{display:none !important;}
+  .summary-bar{display:flex !important;flex-wrap:wrap;gap:8px;}
+  .badge-exp{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .form-group input[readonly],.form-group input{
+    background:transparent !important;border:none !important;
+    border-bottom:1px solid #ccc !important;font-size:11px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- APP HEADER -->
+<div class="app-header no-print">
+  <div class="logo-block">
+    <div class="logo">Al Baironi <span>Trading &amp; Distribution</span></div>
+    <div class="sub">Goods Return Voucher (GRV) System</div>
+  </div>
+  <div class="header-right">
+    <span class="file-status" id="fileStatus">No workbook loaded</span>
+    <label class="btn-load-label">
+      &#128194; Load Excel Workbook
+      <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
+    </label>
+    <label class="btn-load-label" style="background:#1e7e34;" title="Load Sales Data sheet separately if it is too large">
+      &#128202; Load Sales Data CSV/XLSX
+      <input type="file" id="salesFileInput" accept=".xlsx,.xls,.csv" style="display:none">
+    </label>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- INVOICE MODAL -->
+<div class="modal-overlay" id="invModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <span>&#128269; Select Invoice &ndash; Matching Batch / SKU / Customer Transactions</span>
+      <button class="modal-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info" id="modalInfo"></div>
+      <table class="inv-tbl">
+        <thead>
+          <tr>
+            <th>Invoice No</th>
+            <th>Invoice Date</th>
+            <th>Order No</th>
+            <th>SKU Code</th>
+            <th>SKU Description</th>
+            <th>Batch No</th>
+            <th>Expiry Date</th>
+            <th>Inv Qty</th>
+            <th>Unit Price</th>
+            <th>BU Name</th>
+          </tr>
+        </thead>
+        <tbody id="modalBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-success" onclick="confirmInvoice()">&#10004; Use Selected Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMER SEARCH MODAL -->
+<div class="modal-overlay" id="custModal" style="display:none">
+  <div class="modal" style="width:660px">
+    <div class="modal-header">
+      <span>&#128269; Customer Search</span>
+      <button class="modal-close" onclick="closeCustModal()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input type="text" id="custModalSearch" placeholder="Search by Name, Number or Location..."
+          oninput="filterCustModal()"
+          style="flex:1;height:32px;border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;font-size:13px;">
+        <button class="btn btn-primary" onclick="filterCustModal()">Search</button>
+      </div>
+      <table class="inv-tbl" id="custSearchTbl">
+        <thead>
+          <tr>
+            <th>Customer No</th>
+            <th>Customer Name</th>
+            <th>Location</th>
+            <th>Contact No</th>
+          </tr>
+        </thead>
+        <tbody id="custModalBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeCustModal()">Cancel</button>
+      <button class="btn btn-success" onclick="confirmCustModal()">&#10004; Select Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- GRV HEADER -->
+  <div class="card">
+    <div class="card-header">&#128196; GRV Document Header</div>
+    <div class="card-body">
+
+      <!-- ROW 1: GRV No + GRV Date -->
+      <div style="display:grid;grid-template-columns:180px 160px 1fr;gap:10px;margin-bottom:10px;">
+
+        <div class="form-group">
+          <label>GRV Number</label>
+          <input id="grvNo" class="grv-no-field" readonly placeholder="GRV-1001">
+        </div>
+
+        <div class="form-group">
+          <label>GRV Date</label>
+          <input type="date" id="grvDate">
+        </div>
+
+        <div class="form-group">
+          <label>Business Unit</label>
+          <input id="buName" readonly placeholder="Auto-filled from sales data">
+        </div>
+
+      </div>
+
+      <!-- ROW 2: Customer block -->
+      <div style="display:grid;grid-template-columns:200px minmax(0,1fr) 260px;gap:10px;margin-bottom:10px;align-items:end;">
+
+        <div class="form-group">
+          <label>Customer No</label>
+          <div style="display:flex;gap:4px;">
+            <input type="text" id="custNoInput" placeholder="e.g. C001"
+              style="flex:1;min-width:0;"
+              onkeydown="handleCustNoKey(event)"
+              onblur="lookupByNo(this.value)">
+            <button class="btn btn-outline" onclick="openCustModal()" title="Search customer" style="padding:0 8px;font-size:14px;flex-shrink:0;">&#128269;</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input id="custName" readonly placeholder="Auto-filled">
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input id="custLoc" readonly>
+        </div>
+
+      </div>
+
+      <!-- ROW 3: Return Doc Ref + Doc Date + Remarks -->
+      <div style="display:grid;grid-template-columns:200px 160px 1fr;gap:10px;">
+
+        <div class="form-group">
+          <label>Return Document Reference</label>
+          <input type="text" id="returnDocRef" placeholder="e.g. RMA-2025-001">
+        </div>
+
+        <div class="form-group">
+          <label>Document Date</label>
+          <input type="date" id="returnDocDate">
+        </div>
+
+        <div class="form-group">
+          <label>Remarks</label>
+          <input type="text" id="remarks" placeholder="Optional remarks...">
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LINE ITEMS -->
+  <div class="card">
+    <div class="card-header">&#128230; GRV Line Items</div>
+    <div class="card-body">
+
+      <div class="scan-bar no-print">
+        <span style="font-size:12px;color:var(--muted);font-weight:600;">&#128269; Scan or type Barcode / SKU directly in the first column of each row &nbsp;|&nbsp; Press <kbd style="background:#fff;border:1px solid #ccc;border-radius:3px;padding:1px 5px;">Enter</kbd> to lookup</span>
+        <button class="btn btn-accent" onclick="addEmptyLine()">&#10133; Add Row</button>
+        <button class="btn btn-outline" onclick="clearLines()">&#128465; Clear All</button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="grv-table" id="grvTable">
+          <thead>
+            <tr>
+              <th style="width:24px">#</th>
+              <th style="width:90px">Barcode / SKU</th>
+              <th style="width:120px">SKU Name</th>
+              <th style="width:80px">Batch No</th>
+              <th style="width:86px">Expiry Date</th>
+              <th style="width:100px">Invoice No</th>
+              <th style="width:84px">Invoice Date</th>
+              <th style="width:56px">Price</th>
+              <th style="width:64px">Invoiced Qty</th>
+              <th style="width:64px">Return Qty</th>
+              <th style="width:130px">Reason</th>
+              <th style="width:28px" class="no-print"></th>
+            </tr>
+          </thead>
+          <tbody id="lineBody">
+            <tr><td colspan="12" class="no-data">Click <strong>+ Add Row</strong> or scan a barcode to start entering return items.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-bar" id="summaryBar" style="display:none">
+        <div class="sum-item">Lines: <strong id="sumLines">0</strong></div>
+        <div class="sum-item">Total Return Qty: <strong id="sumQty">0</strong></div>
+        <div class="sum-item">Total GRV Amount: <strong id="sumAmt" style="color:var(--primary)">0.00</strong></div>
+        <div class="sum-item">Expired Items: <strong id="sumExp" style="color:var(--danger)">0</strong></div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- PRINT GRV MODAL -->
+<div class="modal-overlay" id="printModal" style="display:none">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">
+      <span>&#128438; Print GRV</span>
+      <button class="modal-close" onclick="document.getElementById('printModal').style.display='none'">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Select GRV to Print</label>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input type="text" id="printSearchInput" placeholder="Search GRV No or Customer..."
+            oninput="filterPrintList()"
+            style="flex:1;height:30px;border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;font-size:13px;">
+        </div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <table class="inv-tbl" style="margin:0;">
+          <thead>
+            <tr>
+              <th style="width:30px"></th>
+              <th>GRV No</th>
+              <th>GRV Date</th>
+              <th>Customer</th>
+              <th>Lines</th>
+              <th>Total Amt</th>
+            </tr>
+          </thead>
+          <tbody id="printGrvList"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('printModal').style.display='none'">Cancel</button>
+      <button class="btn btn-primary" onclick="printSelectedGRV()">&#128438; Print Selected GRV</button>
+      <button class="btn btn-accent" onclick="printCurrentScreen()">&#128438; Print Current Screen</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT FRAME (hidden, for printing saved GRVs) -->
+<div id="printFrame" style="display:none"></div>
+
+  <!-- ACTIONS -->
+  <div class="action-bar no-print">
+    <button class="btn btn-outline" onclick="resetGRV()">&#8635; New GRV</button>
+    <button class="btn btn-success" onclick="saveGRV()">&#128190; Save GRV</button>
+    <button class="btn btn-primary" onclick="openPrintModal()">&#128438; Print GRV</button>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+var wb = null;
+var fileHandle = null;        // File System Access API handle for silent save
+var skuMaster = [];
+var custMaster = [];
+var salesData = [];           // kept for compatibility (empty — data is indexed)
+var salesIndex = {};          // primary index: "batchLower|itemCodeLower|custNum" -> [rows]
+var salesDataLoaded = false;  // true once async indexing is complete
+var savedGRVs = [];
+var lineItems = [];
+var selCust = null;
+var modalRowIdx = null;
+var modalSelInv = null;
+
+var REASONS = ["Damaged","Wrong Item Delivered","Expired","Excess Quantity","Quality Issue","Short Expiry","Other"];
+
+// ============================================================
+// FILE LOAD
+// ============================================================
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  if (e.target._fsHandle) fileHandle = e.target._fsHandle;
+  document.getElementById('fileStatus').textContent = '\u23F3 Reading file…';
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = new Uint8Array(ev.target.result);
+      wb = XLSX.read(data, {
+        type: 'array',
+        cellDates: false,
+        sheetStubs: false,
+        dense: false,
+        WTF: false,
+        cellNF: false,
+        cellHTML: false,
+        cellText: false
+      });
+      parseMasters();
+      toast('Workbook loaded: ' + file.name, 'success');
+      document.getElementById('fileStatus').textContent = '\u2705 ' + file.name;
+    } catch(err) {
+      toast('Error reading file: ' + err.message, 'error');
+      document.getElementById('fileStatus').textContent = '\u274C Load error';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// ============================================================
+// SEPARATE SALES DATA LOADER — pure JS CSV parser, no row limit
+// ============================================================
+document.getElementById('salesFileInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+
+  var statusEl = document.getElementById('fileStatus');
+  statusEl.textContent = '⏳ Reading Sales Data file…';
+  toast('Loading: ' + file.name, 'info');
+
+  salesData    = [];
+  salesIndex   = {};
+  salesDataLoaded = false;
+
+  var isCsv = file.name.toLowerCase().endsWith('.csv');
+
+  if (isCsv) {
+    // ── Pure streaming CSV parser — zero dependency, no row limit ──
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var text = ev.target.result;
+        parseCsvAndIndex(text, file.name);
+      } catch(err) {
+        toast('CSV read error: ' + err.message, 'error');
+        statusEl.textContent = '❌ CSV error';
+      }
+    };
+    reader.onerror = function() { toast('File read failed.', 'error'); };
+    reader.readAsText(file, 'UTF-8');
+
+  } else {
+    // ── XLSX: single-sheet file, no other sheets competing for memory ──
+    var reader2 = new FileReader();
+    reader2.onload = function(ev) {
+      try {
+        var data = new Uint8Array(ev.target.result);
+        var sdWb = XLSX.read(data, {
+          type:'array', cellDates:false,
+          cellNF:false, cellHTML:false, cellText:false, sheetStubs:false
+        });
+        var sname  = sdWb.SheetNames[0];
+        var sdSheet = sdWb.Sheets[sname];
+        if (!sdSheet || !sdSheet['!ref']) {
+          toast('XLSX sheet empty or not parsed. Try saving as CSV instead.', 'error');
+          return;
+        }
+        toast('XLSX parsed — sheet: ' + sname + ' ref: ' + sdSheet['!ref'], 'success');
+        indexSalesSheet(sdSheet);
+      } catch(err) {
+        toast('XLSX error: ' + err.message + ' — try CSV format instead.', 'error');
+        statusEl.textContent = '❌ XLSX error';
+      }
+    };
+    reader2.onerror = function() { toast('File read failed.', 'error'); };
+    reader2.readAsArrayBuffer(file);
+  }
+});
+
+// ── Pure JS CSV parser — handles millions of rows, no library needed ──
+function parseCsvAndIndex(text, fileName) {
+  var statusEl  = document.getElementById('fileStatus');
+  var lines     = text.split(/\r?\n/);
+  var total     = lines.length;
+
+  if (total < 2) {
+    toast('CSV appears empty.', 'error');
+    salesDataLoaded = true;
+    return;
+  }
+
+  // Parse header row — simple split on comma (handles quoted headers too)
+  var headerLine = lines[0];
+  var rawHeaders = csvSplitLine(headerLine);
+  var headers    = {};   // lowercase header name -> column index
+  for (var hi = 0; hi < rawHeaders.length; hi++) {
+    headers[rawHeaders[hi].trim().toLowerCase()] = hi;
+  }
+
+  console.log('CSV headers:', Object.keys(headers).join(', '));
+  toast('CSV columns: ' + Object.keys(headers).join(', '), 'info');
+
+  // Helper: get column value by trying multiple candidate names
+  function colAny(cols, parts) {
+    for (var i = 0; i < cols.length; i++) {
+      var ci = headers[cols[i].toLowerCase()];
+      if (ci !== undefined && ci < parts.length) {
+        var v = parts[ci];
+        if (v) return v.trim();
+      }
+    }
+    return '';
+  }
+
+  var CHUNK      = 10000;
+  var currentRow = 1;       // skip header
+  var indexed    = 0;
+
+  statusEl.textContent = 'Indexing CSV… 0% (0 / ' + (total-1).toLocaleString() + ' rows)';
+
+  function processChunk() {
+    var end = Math.min(currentRow + CHUNK, total);
+    for (; currentRow < end; currentRow++) {
+      var line = lines[currentRow];
+      if (!line || !line.trim()) continue;
+
+      var parts = csvSplitLine(line);
+
+      var invoiceNo = colAny(['OrderNumber','Order Number'], parts);
+      if (!invoiceNo) continue;
+
+      var batchNo  = colAny(['Lot Serial Number','Batch No','BatchNo'], parts);
+      var itemCode = colAny(['2nd Item Number','Item Code','ItemCode'], parts);
+      var custNum  = colAny(['CustomerNumber','Customer Number'], parts);
+
+      var obj = {
+        orderNumber:   colAny(['Document Number','Invoice No'], parts), // original doc number
+        customerNumber:custNum,
+        customerName:  colAny(['CustomerName','Customer Name'], parts),
+        location:      colAny(['Customer Location','Location'], parts),
+        invoiceDate:   colAny(['Invoice Date','InvoiceDate'], parts),
+        itemCode:      itemCode,
+        skuDescription:colAny(['SKU Description','Description'], parts),
+        batchNo:       batchNo,
+        expiryDate:    colAny(['Expiration Date','Expiration','Expiry Date','ExpiryDate'], parts),
+        supplierDesc:  colAny(['Supplier Description','Brand Supplier Name'], parts),
+        invoicedQty:   parseFloat(colAny(['Quantity Ordered','Invoiced Qty'], parts) || 0),
+        unitPrice:     parseFloat(colAny(['Unit Price'], parts) || 0),
+        invoiceNo:     invoiceNo,
+        buName:        colAny(['BU Description','BU Name'], parts)
+      };
+
+      var key = batchNo.toLowerCase() + '|' + itemCode.toLowerCase() + '|' + custNum;
+      if (!salesIndex[key]) salesIndex[key] = [];
+      salesIndex[key].push(obj);
+      indexed++;
+    }
+
+    var done = currentRow - 1;
+    var pct  = Math.round((done / (total - 1)) * 100);
+    statusEl.textContent = 'Indexing CSV… ' + pct + '% (' + done.toLocaleString() + ' / ' + (total-1).toLocaleString() + ')';
+
+    if (currentRow < total) {
+      setTimeout(processChunk, 0);
+    } else {
+      // Free the giant text string from memory
+      lines.length = 0;
+      salesDataLoaded = true;
+      statusEl.textContent = '✅ ' + indexed.toLocaleString() + ' sales records indexed from ' + fileName;
+      toast('Sales Data ready: ' + indexed.toLocaleString() + ' records indexed!', 'success');
+    }
+  }
+
+  setTimeout(processChunk, 0);
+}
+
+// RFC 4180 CSV line splitter — handles quoted fields containing commas/newlines
+function csvSplitLine(line) {
+  var result = [], cur = '', inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var ch = line[i];
+    if (inQ) {
+      if (ch === '"') {
+        if (line[i+1] === '"') { cur += '"'; i++; }   // escaped quote
+        else inQ = false;
+      } else {
+        cur += ch;
+      }
+    } else {
+      if (ch === '"') { inQ = true; }
+      else if (ch === ',') { result.push(cur); cur = ''; }
+      else { cur += ch; }
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+
+// Use File System Access API to pick file and get writable handle (Chrome/Edge)
+document.querySelector('.btn-load-label').addEventListener('click', async function(e) {
+  if (!window.showOpenFilePicker) return; // fallback to normal file input
+  e.preventDefault();
+  try {
+    var handles = await window.showOpenFilePicker({
+      types: [{ description: 'Excel Files', accept: {'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx','.xls']} }],
+      multiple: false
+    });
+    var handle = handles[0];
+
+    // Request write permission immediately while we still have user gesture
+    var perm = await handle.requestPermission({ mode: 'readwrite' });
+    if (perm === 'granted') {
+      fileHandle = handle;
+    } else {
+      fileHandle = null;
+      toast('Write permission denied \u2013 will download on save instead.', 'warn');
+    }
+
+    var file = await handle.getFile();
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var data = new Uint8Array(ev.target.result);
+        wb = XLSX.read(data, {
+          type: 'array',
+          cellDates: false,
+          sheetStubs: false,
+          dense: false,
+          WTF: false,
+          cellNF: false,
+          cellHTML: false,
+          cellText: false
+        });
+        parseMasters();
+        var saveMode = fileHandle ? ' \uD83D\uDCBE Silent save ON' : ' (download mode)';
+        toast('Workbook loaded: ' + file.name + saveMode, 'success');
+        document.getElementById('fileStatus').textContent = '\u2705 ' + file.name + (fileHandle ? ' \uD83D\uDCBE' : '');
+      } catch(err) {
+        toast('Error reading file: ' + err.message, 'error');
+        document.getElementById('fileStatus').textContent = '\u274C Load error';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } catch(err) {
+    if (err.name !== 'AbortError') {
+      // API not supported — fall through to normal input
+      document.getElementById('fileInput').click();
+    }
+  }
+}, true);
+
+// Normalise a sheet name: collapse all Unicode whitespace variants to a
+// single plain space, then trim leading/trailing spaces, then lowercase.
+function normSheet(s) {
+  return String(s)
+    .replace(/[\u00A0\u2000-\u200B\u202F\u205F\u3000\uFEFF\t\r\n]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+// Find a worksheet object by name — tolerates case, extra spaces, non-breaking
+// spaces, and other Unicode whitespace that Excel sometimes inserts.
+function alphaOnly(s) { return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+// findSheet: tries every possible matching strategy including iterating
+// wb.Sheets object keys directly (which may differ from wb.SheetNames entries).
+function findSheet(name) {
+  if (!wb) return null;
+  var targetAlpha = alphaOnly(name);
+  var targetNorm  = normSheet(name);
+
+  // Get all real sheet keys (exclude special ! keys like !ref, !margins)
+  var sheetKeys = Object.keys(wb.Sheets).filter(function(k){ return k[0] !== '!'; });
+
+  // Try to find matching key name
+  var matchedKey = null;
+  if (wb.Sheets.hasOwnProperty(name)) {
+    matchedKey = name;
+  } else {
+    for (var ki = 0; ki < sheetKeys.length; ki++) {
+      if (normSheet(sheetKeys[ki]) === targetNorm || alphaOnly(sheetKeys[ki]) === targetAlpha) {
+        matchedKey = sheetKeys[ki];
+        break;
+      }
+    }
+    // Also try SheetNames array
+    if (!matchedKey) {
+      for (var si = 0; si < wb.SheetNames.length; si++) {
+        var sn = wb.SheetNames[si];
+        if (normSheet(sn) === targetNorm || alphaOnly(sn) === targetAlpha) {
+          matchedKey = sn;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!matchedKey) return null;
+
+  var sheet = wb.Sheets[matchedKey];
+
+  // Sheet exists but is empty object {} — XLSX didn't parse it (too large for default mode)
+  // Re-parse just this one sheet using a fresh targeted read
+  if (!sheet || typeof sheet !== 'object' || !sheet['!ref']) {
+    console.warn('Sheet "' + matchedKey + '" found but empty/unparsed. Keys:', sheet ? Object.keys(sheet).slice(0,5) : 'null');
+    toast('Sheet object empty — try re-parsing...', 'warn');
+    return sheet || null; // return whatever we have; caller will handle !ref check
+  }
+
+  return sheet;
+}
+
+function getSheet(name) {
+  if (!wb) return [];
+  var sheet = findSheet(name);
+  if (sheet) return XLSX.utils.sheet_to_json(sheet, {defval:''});
+  toast('Sheet "' + name + '" not found. Available: ' + wb.SheetNames.join(', '), 'error');
+  return [];
+}
+
+// ============================================================
+// INDEX SALES SHEET — works on any sheet object (from main wb or separate file)
+// Reads cells directly (no sheet_to_json) to handle millions of rows without
+// freezing the browser. Runs in async 5000-row chunks.
+// ============================================================
+function indexSalesSheet(sdSheet) {
+  var statusEl = document.getElementById('fileStatus');
+  var origStatus = statusEl.textContent;
+
+  var ref = sdSheet['!ref'];
+  if (!ref) {
+    toast('Sales Data sheet is empty (no !ref).', 'error');
+    salesDataLoaded = true;
+    return;
+  }
+
+  var range = XLSX.utils.decode_range(ref);
+  var R0 = range.s.r;   // header row index
+  var R1 = range.e.r;   // last data row index
+  var C0 = range.s.c;
+  var C1 = range.e.c;
+
+  // Build header map: column name (lowercase) -> column index
+  var headers = {};
+  for (var c = C0; c <= C1; c++) {
+    var hCell = sdSheet[XLSX.utils.encode_cell({r: R0, c: c})];
+    if (hCell && hCell.v !== undefined) {
+      headers[String(hCell.v).trim().toLowerCase()] = c;
+    }
+  }
+
+  var headerList = Object.keys(headers).join(', ');
+  console.log('Sales Data columns:', headerList);
+  toast('Sales Data columns detected: ' + headerList, 'info');
+
+  // Helper functions — read directly from cell dictionary
+  function cv(r, colName) {
+    var ci = headers[colName.toLowerCase()];
+    if (ci === undefined) return '';
+    var cell = sdSheet[XLSX.utils.encode_cell({r: r, c: ci})];
+    return cell && cell.v !== undefined ? String(cell.v).trim() : '';
+  }
+  function cvAny(r, names) {
+    for (var i = 0; i < names.length; i++) { var v = cv(r, names[i]); if (v) return v; }
+    return '';
+  }
+  function cvDate(r, names) {
+    for (var i = 0; i < names.length; i++) {
+      var ci = headers[names[i].toLowerCase()];
+      if (ci === undefined) continue;
+      var cell = sdSheet[XLSX.utils.encode_cell({r: r, c: ci})];
+      if (cell && cell.v !== undefined && cell.v !== '') return fmtDate(cell.v);
+    }
+    return '';
+  }
+
+  var totalRows   = R1 - R0;
+  var currentRow  = R0 + 1;
+  var CHUNK       = 5000;
+  var indexed     = 0;
+
+  statusEl.textContent = 'Indexing Sales Data… 0% (0 / ' + totalRows.toLocaleString() + ' rows)';
+
+  function processChunk() {
+    var end = Math.min(currentRow + CHUNK, R1 + 1);
+    for (; currentRow < end; currentRow++) {
+      var invoiceNo = cvAny(currentRow, ['OrderNumber','Order Number']);
+      if (!invoiceNo) continue;
+
+      var batchNo  = cvAny(currentRow, ['Lot Serial Number','Batch No','BatchNo']);
+      var itemCode = cvAny(currentRow, ['2nd Item Number','Item Code','ItemCode']);
+      var custNum  = cvAny(currentRow, ['CustomerNumber','Customer Number']);
+
+      var obj = {
+        orderNumber:   cvAny(currentRow,  ['Document Number','Invoice No']), // original doc number
+        customerNumber:custNum,
+        customerName:  cvAny(currentRow,  ['CustomerName','Customer Name']),
+        location:      cvAny(currentRow,  ['Customer Location','Location']),
+        invoiceDate:   cvDate(currentRow, ['Invoice Date','InvoiceDate']),
+        itemCode:      itemCode,
+        skuDescription:cvAny(currentRow,  ['SKU Description','Description']),
+        batchNo:       batchNo,
+        expiryDate:    cvDate(currentRow, ['Expiration Date','Expiration','Expiry Date','ExpiryDate']),
+        supplierDesc:  cvAny(currentRow,  ['Supplier Description','Brand Supplier Name']),
+        invoicedQty:   parseFloat(cvAny(currentRow, ['Quantity Ordered','Invoiced Qty']) || 0),
+        unitPrice:     parseFloat(cv(currentRow, 'Unit Price') || 0),
+        invoiceNo:     invoiceNo,
+        buName:        cvAny(currentRow,  ['BU Description','BU Name'])
+      };
+
+      // Index key: batchNo|itemCode|customerNumber (all lowercase)
+      var key = batchNo.toLowerCase() + '|' + itemCode.toLowerCase() + '|' + custNum;
+      if (!salesIndex[key]) salesIndex[key] = [];
+      salesIndex[key].push(obj);
+      indexed++;
+    }
+
+    var done = currentRow - R0 - 1;
+    var pct  = totalRows > 0 ? Math.round((done / totalRows) * 100) : 100;
+    statusEl.textContent = 'Indexing… ' + pct + '% (' + done.toLocaleString() + ' / ' + totalRows.toLocaleString() + ')';
+
+    if (currentRow <= R1) {
+      setTimeout(processChunk, 0);
+    } else {
+      salesDataLoaded = true;
+      statusEl.textContent = '✅ ' + indexed.toLocaleString() + ' sales records indexed';
+      toast('Sales Data ready: ' + indexed.toLocaleString() + ' records indexed!', 'success');
+    }
+  }
+
+  setTimeout(processChunk, 0);
+}
+
+function parseMasters() {
+  // DEEP DIAGNOSTIC
+  var sheetObjKeys = Object.keys(wb.Sheets).filter(function(k){ return k[0] !== '!'; });
+  var diagNames = wb.SheetNames.map(function(s) {
+    var codes = []; for (var ci=0;ci<s.length;ci++) codes.push(s.charCodeAt(ci));
+    return '"'+s+'" ['+codes.join(',')+']';
+  });
+  var diagKeys = sheetObjKeys.map(function(s) {
+    var codes = []; for (var ci=0;ci<s.length;ci++) codes.push(s.charCodeAt(ci));
+    return '"'+s+'" ['+codes.join(',')+']';
+  });
+  console.log('=== SHEET DIAGNOSTICS ===');
+  console.log('wb.SheetNames:', diagNames.join(' | '));
+  console.log('wb.Sheets keys:', diagKeys.join(' | '));
+  console.log('Match?', JSON.stringify(wb.SheetNames) === JSON.stringify(sheetObjKeys));
+  toast('SheetNames: ' + wb.SheetNames.join(' | '), 'info');
+  toast('Sheets keys: ' + sheetObjKeys.join(' | '), 'info');
+
+  // SKU Master
+  var skuRows = getSheet('SKU Master');
+  skuMaster = [];
+  skuRows.forEach(function(r) {
+    var obj = {
+      barcode:     str(r['Barcode'] || r['barcode'] || ''),
+      itemCode:    str(r['Item Code'] || r['SKU Code'] || r['ItemCode'] || ''),
+      description: str(r['Description'] || r['SKU Name'] || r['Name'] || '')
+    };
+    if (obj.itemCode || obj.barcode) skuMaster.push(obj);
+  });
+
+  // CustomerMaster
+  var custRows = getSheet('CustomerMaster');
+  custMaster = [];
+  custRows.forEach(function(r) {
+    var obj = {
+      customerNumber: str(r['CustomerNumber'] || r['Customer Number'] || ''),
+      customerName:   str(r['CustomerName']   || r['Customer Name']   || ''),
+      location:       str(r['Location'] || ''),
+      contactNo:      str(r['ContactNo'] || r['Contact No'] || r['ContactNumber'] || '')
+    };
+    if (obj.customerNumber) custMaster.push(obj);
+  });
+
+  // Sales Data — index asynchronously in chunks to handle millions of rows
+  salesData = [];
+  salesIndex = {};
+  salesDataLoaded = false;
+
+  // Find the Sales Data sheet — handle both missing and empty-object cases
+  var sdSheet = findSheet('Sales Data');
+  var sdSheetRef = sdSheet ? sdSheet['!ref'] : null;
+
+  console.log('findSheet result:', sdSheet ? 'object' : 'null', '| !ref:', sdSheetRef);
+  console.log('wb.Sheets keys:', Object.keys(wb.Sheets));
+
+  // If sheet object exists but has no !ref, XLSX loaded the workbook without
+  // parsing cell data for this sheet (common with very large sheets in default mode).
+  // Solution: re-read the raw file parsing ONLY this sheet.
+  if (sdSheet && !sdSheetRef) {
+    toast('Sales Data sheet found but unparsed (too large for default load). Re-reading...', 'warn');
+    // We cannot re-read the raw bytes here without the original file handle,
+    // so we proceed — the !ref check below will show a clear message.
+  }
+
+  if (!sdSheet || !sdSheetRef) {
+    // Sales Data not in this workbook — this is OK, user loads it separately
+    toast('ℹ Sales Data not found in main workbook. Use the green “Load Sales Data CSV/XLSX” button to load your sales transactions file.', 'warn');
+    salesDataLoaded = false; // will be set true when CSV/XLSX is loaded
+  } else {
+    indexSalesSheet(sdSheet);
+  }
+
+  // Load existing GRV data
+  if (wb.Sheets['GRVDATA']) {
+    savedGRVs = XLSX.utils.sheet_to_json(wb.Sheets['GRVDATA'], {defval:''});
+  } else {
+    savedGRVs = [];
+  }
+
+  buildCustDropdown('');
+  setNextGRVNo();
+}
+
+function str(v) { return String(v === null || v === undefined ? '' : v).trim(); }
+
+// parseToDate: robustly parse any date format into a JS Date (or null).
+// Handles: YYYY-MM-DD, DD-MM-YYYY, DD/MM/YYYY, DD-MM-YY, DD/MM/YY,
+//          MM/DD/YYYY (US), Excel serial numbers, JS Date objects.
+function parseToDate(val) {
+  if (!val && val !== 0) return null;
+  if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+
+  // Excel serial number
+  if (typeof val === 'number') {
+    try {
+      var p = XLSX.SSF.parse_date_code(val);
+      if (p) return new Date(p.y, p.m - 1, p.d);
+    } catch(e) {}
+    return null;
+  }
+
+  var s = String(val).trim();
+  if (!s) return null;
+
+  var m;
+
+  // YYYY-MM-DD  or  YYYY/MM/DD
+  m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+
+  // DD-MM-YYYY  or  DD/MM/YYYY
+  m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+
+  // DD-MM-YY  or  DD/MM/YY  → assume 20xx
+  m = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{2})$/);
+  if (m) return new Date(2000 + +m[3], +m[2]-1, +m[1]);
+
+  // MM/DD/YYYY (US format — only if month <= 12 and no ambiguity)
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m && +m[1] <= 12) return new Date(+m[3], +m[1]-1, +m[2]);
+
+  return null;
+}
+
+// fmtDate: normalize any date value → internal storage format YYYY-MM-DD
+function fmtDate(val) {
+  if (!val && val !== 0) return '';
+  var d = parseToDate(val);
+  if (!d || isNaN(d.getTime())) return str(val); // fallback: return as-is
+  return d.getFullYear() + '-' +
+         String(d.getMonth()+1).padStart(2,'0') + '-' +
+         String(d.getDate()).padStart(2,'0');
+}
+
+// Display date as DD-MM-YYYY for printing/UI
+function displayDate(val) {
+  if (!val) return '';
+  var s = String(val).trim();
+  // Handle YYYY-MM-DD
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[3] + '-' + m[2] + '-' + m[1];
+  // Handle YYYY/MM/DD
+  m = s.match(/^(\d{4})\/(\d{2})\/(\d{2})/);
+  if (m) return m[3] + '-' + m[2] + '-' + m[1];
+  // Already DD-MM-YYYY or other — return as-is
+  return s;
+}
+
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function todayDisplay() {
+  var d = new Date();
+  return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+}
+
+// ============================================================
+// GRV NUMBER  (GRV-1001, GRV-1002 ...)
+// ============================================================
+function setNextGRVNo() {
+  var max = 1000;
+  savedGRVs.forEach(function(r) {
+    var n = str(r['GRV No'] || '');
+    var m = n.match(/GRV-(\d+)/i);
+    if (m) { var num = parseInt(m[1]); if (num > max) max = num; }
+  });
+  document.getElementById('grvNo').value = 'GRV-' + (max + 1);
+}
+
+// ============================================================
+// CUSTOMERS
+// ============================================================
+
+// ── BARCODE SCANNER SUPPORT ──────────────────────────────────────────
+// Barcode scanners work by rapidly typing characters (~5ms per char)
+// then sending Enter/Tab. We detect this "burst" pattern:
+// - Track time between keystrokes
+// - If chars arrive < 50ms apart → scanner mode (suppress lookups until Enter)
+// - If chars arrive > 50ms apart → manual typing (don't auto-trigger)
+// This lets the scanner finish populating the field before we act on it.
+
+var _scanBuf = '';          // accumulated scanner characters
+var _scanTimer = null;      // debounce timer
+var _lastKeyTime = 0;       // timestamp of last keydown
+
+function handleCustNoKey(event) {
+  if (event.key === 'Enter' || event.key === 'Tab') {
+    event.preventDefault();
+    if (_scanTimer) { clearTimeout(_scanTimer); _scanTimer = null; }
+    var val = event.target.value.trim();
+    if (val) {
+      var found = lookupByNo(val);
+      if (found) setTimeout(function(){ document.getElementById('returnDocRef').focus(); }, 60);
+    }
+  }
+  // No auto-trigger on keystrokes — Enter/Tab only.
+  // Barcode scanners always append Enter, so they work without special handling.
+}
+
+// Called when user types customer number and presses Enter/Tab or blurs
+function lookupByNo(val) {
+  val = (val || '').trim();
+  if (!val) return false;
+  // Avoid re-lookup if already resolved to same number
+  if (selCust && selCust.customerNumber === val) return true;
+  var c = custMaster.find(function(x) {
+    return x.customerNumber.toLowerCase() === val.toLowerCase();
+  });
+  if (c) {
+    applyCustomer(c);
+    return true;
+  } else {
+    // Only open modal if field still has an unresolved value
+    if (!selCust || selCust.customerNumber !== val) {
+      document.getElementById('custName').value = '';
+      document.getElementById('custLoc').value = '';
+      selCust = null;
+      toast('Customer No "' + val + '" not found. Opening search...', 'warn');
+      openCustModal(val);
+    }
+    return false;
+  }
+}
+
+function applyCustomer(c) {
+  selCust = c;
+  document.getElementById('custNoInput').value = c.customerNumber;
+  document.getElementById('custName').value    = c.customerName;
+  document.getElementById('custLoc').value     = c.location;
+}
+
+// ---- Customer Search Modal ----
+var custModalSel = null;
+
+function openCustModal(prefill) {
+  custModalSel = null;
+  var q = prefill || document.getElementById('custNoInput').value || '';
+  document.getElementById('custModalSearch').value = q;
+  filterCustModal();
+  document.getElementById('custModal').style.display = 'flex';
+  setTimeout(function(){ document.getElementById('custModalSearch').focus(); }, 80);
+}
+
+function closeCustModal() {
+  document.getElementById('custModal').style.display = 'none';
+  custModalSel = null;
+}
+
+function filterCustModal() {
+  var f = document.getElementById('custModalSearch').value.toLowerCase();
+  var list = custMaster.filter(function(c) {
+    return !f ||
+      c.customerNumber.toLowerCase().indexOf(f) >= 0 ||
+      c.customerName.toLowerCase().indexOf(f) >= 0 ||
+      c.location.toLowerCase().indexOf(f) >= 0;
+  });
+  var tbody = document.getElementById('custModalBody');
+  tbody.innerHTML = '';
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" class="no-data">No customers found.</td></tr>';
+    return;
+  }
+  list.forEach(function(c) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><strong>' + esc(c.customerNumber) + '</strong></td>' +
+      '<td>' + esc(c.customerName) + '</td>' +
+      '<td>' + esc(c.location) + '</td>' +
+      '<td>' + esc(c.contactNo) + '</td>';
+    tr.onclick = function() {
+      document.querySelectorAll('#custModalBody tr').forEach(function(r){ r.classList.remove('sel'); });
+      tr.classList.add('sel');
+      custModalSel = c;
+    };
+    tr.ondblclick = function() {
+      custModalSel = c;
+      confirmCustModal();
+    };
+    tbody.appendChild(tr);
+  });
+}
+
+function confirmCustModal() {
+  if (!custModalSel) { toast('Please select a customer row.', 'error'); return; }
+  applyCustomer(custModalSel);
+  closeCustModal();
+  // Focus first line item or add row prompt
+  setTimeout(function(){
+    var inputs = document.querySelectorAll('.sku-lookup-input');
+    if (inputs.length) inputs[0].focus();
+  }, 80);
+}
+
+// Keep old names working (used in resetGRV etc)
+function buildCustDropdown() {}
+function filterCustomers() {}
+function onCustChange() {}
+
+// ============================================================
+// ADD EMPTY ROW  (user scans/types in the row's first cell)
+// ============================================================
+function addEmptyLine(silent) {
+  if (!silent && !selCust) { toast('Please select a customer first.', 'error'); return; }
+  var line = {
+    id: Date.now() + Math.random(),
+    lookupVal: '',
+    barcode: '',
+    itemCode: '',
+    description: '',
+    batchNo: '',
+    expiryDate: '',
+    invoiceNo: '',
+    invoiceDate: '',
+    unitPrice: '',
+    invoicedQty: '',
+    returnQty: '',
+    reason: '',
+    isExpired: false
+  };
+  lineItems.push(line);
+  renderLines();
+  // Focus the new row's first input
+  setTimeout(function() {
+    var inputs = document.querySelectorAll('.sku-lookup-input');
+    if (inputs.length) inputs[inputs.length-1].focus();
+  }, 60);
+}
+
+// Lookup SKU from the first column input (barcode or item code)
+// ── SKU / BARCODE SCANNER HELPERS ─────────────────────────────────
+// _skuScanTimers: per-row debounce timers; _skuLastKey: per-row last keydown time
+var _skuScanTimers = {};
+var _skuLastKey    = {};
+
+function skuKeyDown(event, idx) {
+  _skuLastKey[idx] = Date.now();
+  if (event.key === 'Enter' || event.key === 'Tab') {
+    event.preventDefault();
+    if (_skuScanTimers[idx]) { clearTimeout(_skuScanTimers[idx]); delete _skuScanTimers[idx]; }
+    doSkuLookup(idx, event.target.value);
+  }
+}
+
+function skuScanDetect(event, idx) {
+  // Intentionally empty — SKU lookup is triggered ONLY by Enter or Tab
+  // (see skuKeyDown). Barcode scanners always send Enter after the code,
+  // so they work correctly without any auto-trigger logic here.
+}
+
+function doSkuLookup(idx, val) {
+  val = val.trim();
+  if (!val) return;
+  var line = lineItems[idx];
+  if (line.lookupVal === val && line.itemCode) return; // already resolved, no change
+  line.lookupVal = val;
+
+  var sku = skuMaster.find(function(s) {
+    return s.itemCode.toLowerCase() === val.toLowerCase() ||
+           s.barcode === val;
+  });
+
+  if (sku) {
+    line.barcode     = sku.barcode;
+    line.itemCode    = sku.itemCode;
+    line.description = sku.description;
+    line.lookupVal   = sku.itemCode;  // always show SKU Code in the field, not barcode
+    renderLines();
+    setTimeout(function() {
+      var batches = document.querySelectorAll('.batch-input');
+      if (batches[idx]) batches[idx].focus();
+    }, 60);
+  } else {
+    // Not in master — store as-is, warn
+    line.itemCode    = val;
+    line.barcode     = val;
+    line.lookupVal   = val;
+    line.description = '';
+    toast('SKU "' + val + '" not found in SKU Master \u2013 added as entered.', 'warn');
+    renderLines();
+    setTimeout(function() {
+      var batches = document.querySelectorAll('.batch-input');
+      if (batches[idx]) batches[idx].focus();
+    }, 60);
+  }
+}
+
+// ============================================================
+// RENDER LINE ITEMS
+// ============================================================
+function renderLines() {
+  var tbody = document.getElementById('lineBody');
+  if (lineItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="12" class="no-data">Click <strong>+ Add Row</strong> or scan directly into the first column of a row.</td></tr>';
+    document.getElementById('summaryBar').style.display = 'none';
+    return;
+  }
+
+  var html = '';
+  lineItems.forEach(function(line, idx) {
+    var expiredStyle = line.isExpired ? 'border-color:var(--danger);background:var(--danger-light);color:var(--danger);font-weight:700;' : '';
+    var invStyle = line.invoiceNo ? 'font-weight:700;color:var(--primary-mid);background:#f0f7ff;' : '';
+    var rqStyle = (line.invoicedQty && parseFloat(line.returnQty) > parseFloat(line.invoicedQty)) ? 'border-color:var(--danger);background:var(--danger-light);' : '';
+    var expBadge = line.isExpired ? ' <span style="display:inline-block;background:#c0392b;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;margin-left:3px;vertical-align:middle;letter-spacing:0.5px;">EXP</span>' : '';
+
+    var reasonOptions, reasonDisabled;
+    if (line.isExpired) {
+      // Locked to Expired — single option, select disabled
+      reasonOptions = '<option value="Expired" selected>Expired</option>';
+      reasonDisabled = ' disabled';
+    } else {
+      // All reasons except "Expired"
+      reasonOptions = '<option value="">-- Reason --</option>';
+      REASONS.forEach(function(r) {
+        if (r === 'Expired') return; // never show Expired for non-expired items
+        reasonOptions += '<option value="' + r + '"' + (line.reason === r ? ' selected' : '') + '>' + r + '</option>';
+      });
+      reasonDisabled = '';
+    }
+
+    // First column: show SKU Code if resolved, otherwise show what was typed (placeholder state)
+    var skuDisplay = line.itemCode || line.lookupVal || '';
+    var skuBg = line.itemCode ? 'background:var(--primary-light);color:var(--primary);font-weight:700;' : 'background:#fff;';
+    // Show barcode as tooltip if lookup was done via barcode scan
+    var skuTitle = (line.barcode && line.barcode !== line.itemCode) ? ' title="Barcode: ' + esc(line.barcode) + '"' : '';
+
+    html += '<tr data-idx="' + idx + '">';
+    html += '<td class="row-num">' + (idx+1) + '</td>';
+
+    // COLUMN 1: Barcode / SKU — Enter/Tab OR scanner burst auto-triggers lookup
+    html += '<td><input type="text" value="' + esc(skuDisplay) + '" placeholder="Scan / type SKU"' + skuTitle +
+            ' class="sku-lookup-input" data-rowidx="' + idx + '" style="width:83px;' + skuBg + '"' +
+            ' onkeydown="skuKeyDown(event,' + idx + ')"' +
+            ' oninput="skuScanDetect(event,' + idx + ')"></td>';
+
+    // COLUMN 2: SKU Name — truncated to 12 chars displayed, full name in title tooltip
+    var descShort = line.description.length > 18 ? line.description.substring(0,18) + '\u2026' : line.description;
+    html += '<td><input type="text" value="' + esc(descShort) + '" title="' + esc(line.description) + '" readonly placeholder="Auto-filled" style="width:112px;"></td>';
+
+    // COLUMN 3: Batch No — Tab or Enter triggers lookup
+    html += '<td><input type="text" value="' + esc(line.batchNo) + '" placeholder="Batch No" class="batch-input" style="width:74px;"' +
+            ' onkeydown="if(event.key===\'Enter\'||event.key===\'Tab\'){event.preventDefault();onBatchChange(' + idx + ',this.value);}"></td>';
+
+    // COLUMN 4: Expiry Date
+    html += '<td style="white-space:nowrap"><input type="text" value="' + esc(line.expiryDate) + '" readonly style="width:76px;' + expiredStyle + '">' + expBadge + '</td>';
+
+    // COLUMN 5: Invoice No + search
+    html += '<td><div class="inv-cell">';
+    html += '<input type="text" value="' + esc(line.invoiceNo) + '" readonly style="width:68px;' + invStyle + '">';
+    if (line.batchNo) {
+      html += '<button class="btn btn-sm btn-outline no-print" onclick="openModal(' + idx + ')" title="Search Invoice" style="padding:2px 5px;font-size:11px;height:24px;">&#128269;</button>';
+    }
+    html += '</div></td>';
+
+    // COLUMN 6: Invoice Date
+    html += '<td><input type="text" value="' + esc(line.invoiceDate) + '" readonly style="width:78px;background:#f0f4f8;"></td>';
+
+    // COLUMN 7: Price
+    html += '<td><input type="text" value="' + (line.unitPrice ? parseFloat(line.unitPrice).toFixed(2) : '') + '" readonly style="width:50px;background:#f0f4f8;text-align:right;"></td>';
+
+    // COLUMN 8: Invoiced Qty
+    html += '<td><input type="number" value="' + (line.invoicedQty || '') + '" readonly style="width:56px;background:#f0f4f8;text-align:right;"></td>';
+
+    // COLUMN 9: Return Qty
+    // Expired: Tab/Enter saves qty and advances to next SKU row (reason is locked/disabled)
+    // Normal:  Tab/Enter moves focus to Reason dropdown
+    html += '<td><input type="number" value="' + (line.returnQty || '') + '" min="0" step="1" style="width:56px;text-align:right;' + rqStyle + '"' +
+            ' onchange="onRQChange(' + idx + ',this.value)"' +
+            ' onkeydown="if(event.key===\'Enter\'||event.key===\'Tab\'){event.preventDefault();onRQChange(' + idx + ',this.value);' +
+            (line.isExpired ? 'advanceRow(' + idx + ');' : 'var s=document.querySelectorAll(\'.reason-select\');if(s[' + idx + '])s[' + idx + '].focus();') +
+            '}"></td>';
+
+    // COLUMN 10: Reason — locked to "Expired" for expired items; disabled+red
+    var reasonStyle = line.isExpired
+      ? 'width:124px;color:var(--danger);font-weight:700;background:#fff0f0;cursor:not-allowed;'
+      : 'width:124px;';
+    html += '<td><select class="reason-select"' + reasonDisabled +
+            ' onchange="onReasonChange(' + idx + ',this.value)"' +
+            ' onkeydown="if(!this.disabled&&(event.key===\'Enter\'||event.key===\'Tab\')&&this.value){event.preventDefault();onReasonChange(' + idx + ',this.value);}"' +
+            ' style="' + reasonStyle + '">' + reasonOptions + '</select></td>';
+
+    // DELETE
+    html += '<td class="no-print"><button class="del-btn" onclick="deleteLine(' + idx + ')" title="Remove">&#10005;</button></td>';
+    html += '</tr>';
+  });
+
+  tbody.innerHTML = html;
+
+  // Summary
+  var totalQty = 0, expCount = 0, totalAmt = 0;
+  lineItems.forEach(function(l) {
+    var rq = parseFloat(l.returnQty) || 0;
+    var up = parseFloat(l.unitPrice) || 0;
+    totalQty += rq;
+    totalAmt += rq * up;
+    if (l.isExpired) expCount++;
+  });
+  document.getElementById('sumLines').textContent = lineItems.length;
+  document.getElementById('sumQty').textContent = totalQty;
+  document.getElementById('sumAmt').textContent = totalAmt.toFixed(2);
+  document.getElementById('sumExp').textContent = expCount;
+  document.getElementById('summaryBar').style.display = 'flex';
+}
+
+function esc(v) {
+  return String(v === null || v === undefined ? '' : v)
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ============================================================
+// BATCH CHANGE
+// ============================================================
+function onBatchChange(idx, batch) {
+  var trimmed = batch.trim();
+  if (lineItems[idx].batchNo === trimmed) return; // no change, skip
+  lineItems[idx].batchNo = trimmed;
+
+  if (!trimmed || !selCust) {
+    setTimeout(function(){ renderLines(); }, 0);
+    return;
+  }
+
+  if (!salesDataLoaded) {
+    toast('Sales Data is still indexing \u2013 please wait a moment and try again.', 'warn');
+    setTimeout(function(){ renderLines(); }, 0);
+    return;
+  }
+
+  var matches = findInvoices(idx);
+
+  if (matches.length === 0) {
+    toast('No sales records for Batch "' + trimmed + '" with this customer/SKU.', 'warn');
+    setTimeout(function(){ renderLines(); }, 0);
+  } else if (matches.length === 1) {
+    // single match — auto-fill, defer render
+    setTimeout(function(){
+      applyInvoice(idx, matches[0]);
+      toast('Invoice ' + matches[0].invoiceNo + ' auto-filled.', 'success');
+    }, 0);
+  } else {
+    // multiple matches — render first, then open modal after DOM settles
+    setTimeout(function(){
+      renderLines();
+      setTimeout(function(){ openModal(idx); }, 50);
+    }, 0);
+  }
+}
+
+function findInvoices(idx) {
+  var line = lineItems[idx];
+  var key = line.batchNo.toLowerCase() + '|' + line.itemCode.toLowerCase() + '|' + selCust.customerNumber;
+  var result = salesIndex[key] || [];
+
+  // Diagnostic
+  var totalKeys = Object.keys(salesIndex).length;
+  console.log('findInvoices key:', key, '| index size:', totalKeys, '| matches:', result.length);
+  if (result.length === 0 && totalKeys > 0) {
+    // Sample 5 keys from the index so user can see the format
+    var sample = Object.keys(salesIndex).slice(0,5);
+    console.log('Sample index keys:', sample);
+    toast('Batch lookup key: "' + key + '" | Index has ' + totalKeys.toLocaleString() + ' keys | Sample: ' + sample[0], 'warn');
+  }
+  return result;
+}
+
+function applyInvoice(idx, inv) {
+  var line = lineItems[idx];
+  line.invoiceNo    = inv.invoiceNo;
+  line.invoiceDate  = inv.invoiceDate;
+  line.invoicedQty  = inv.invoicedQty;
+  line.unitPrice    = inv.unitPrice;
+  line.expiryDate   = inv.expiryDate;
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  line.isExpired = false;
+  if (inv.expiryDate) {
+    var exp = parseToDate(inv.expiryDate);
+    if (exp && !isNaN(exp.getTime())) {
+      exp.setHours(0,0,0,0);
+      if (exp < today) {
+        line.isExpired = true;
+        line.reason = 'Expired';
+        toast('\u26a0 Batch ' + line.batchNo + ' EXPIRED (' + displayDate(inv.expiryDate) + '). Reason set to Expired.', 'error');
+      }
+    }
+  }
+
+  if (inv.buName) document.getElementById('buName').value = inv.buName;
+  renderLines();
+
+  // Move cursor: always land on Return Qty after invoice fills in
+  // (whether expired or not — expiry date is readonly, nothing to enter there)
+  setTimeout(function() {
+    var rqInputs = document.querySelectorAll('#lineBody input[type="number"]');
+    // rqInputs contains: invoicedQty (readonly) and returnQty per row
+    // returnQty inputs are at index (idx*2 + 1) if invoicedQty is first
+    // More reliably: find by row index using querySelectorAll on the tr
+    var rows = document.querySelectorAll('#lineBody tr');
+    if (rows[idx]) {
+      var numInputs = rows[idx].querySelectorAll('input[type="number"]');
+      // Last number input in the row is Return Qty (invoicedQty is readonly before it)
+      var rqEl = null;
+      for (var ni = numInputs.length - 1; ni >= 0; ni--) {
+        if (!numInputs[ni].readOnly) { rqEl = numInputs[ni]; break; }
+      }
+      if (rqEl) rqEl.focus();
+    }
+  }, 60);
+}
+
+// ============================================================
+// INVOICE MODAL
+// ============================================================
+function openModal(idx) {
+  if (!lineItems[idx] || !lineItems[idx].batchNo) { toast('Enter Batch No first.', 'error'); return; }
+  if (!selCust) { toast('Select a customer first.', 'error'); return; }
+
+  modalRowIdx = idx;
+  modalSelInv = null;
+  var matches = findInvoices(idx);
+  var line = lineItems[idx];
+
+  document.getElementById('modalInfo').textContent =
+    'SKU: ' + line.itemCode + ' | Batch: ' + line.batchNo +
+    ' | Customer: ' + selCust.customerName + ' \u2013 ' + matches.length + ' transaction(s) found';
+
+  var tbody = document.getElementById('modalBody');
+  if (!tbody) return; // safety guard
+  tbody.innerHTML = '';
+
+  if (matches.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" class="no-data">No matching transactions found in Sales Data.</td></tr>';
+  } else {
+    matches.forEach(function(m, i) {
+      var today = new Date(); today.setHours(0,0,0,0);
+      var _expD = m.expiryDate ? parseToDate(m.expiryDate) : null;
+      if (_expD) _expD.setHours(0,0,0,0);
+      var expired = _expD && _expD < today;
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td><strong>' + esc(m.invoiceNo) + '</strong></td>' +
+        '<td>' + esc(m.invoiceDate) + '</td>' +
+        '<td>' + esc(m.orderNumber) + '</td>' +
+        '<td>' + esc(m.itemCode) + '</td>' +
+        '<td>' + esc(m.skuDescription) + '</td>' +
+        '<td>' + esc(m.batchNo) + '</td>' +
+        '<td style="' + (expired ? 'color:var(--danger);font-weight:700;' : '') + '">' + esc(m.expiryDate) + (expired ? ' \u26a0' : '') + '</td>' +
+        '<td style="text-align:right">' + m.invoicedQty + '</td>' +
+        '<td style="text-align:right">' + (m.unitPrice ? m.unitPrice.toFixed(2) : '') + '</td>' +
+        '<td>' + esc(m.buName) + '</td>';
+
+      tr.onclick = function() {
+        document.querySelectorAll('#modalBody tr').forEach(function(r){ r.classList.remove('sel'); });
+        tr.classList.add('sel');
+        modalSelInv = m;
+      };
+      tbody.appendChild(tr);
+      // Auto-select last (most recent)
+      if (i === matches.length - 1) tr.click();
+    });
+  }
+
+  document.getElementById('invModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('invModal').style.display = 'none';
+  modalRowIdx = null;
+  modalSelInv = null;
+}
+
+function confirmInvoice() {
+  if (!modalSelInv) { toast('Please select an invoice row first.', 'error'); return; }
+  applyInvoice(modalRowIdx, modalSelInv);
+  closeModal();
+}
+
+// ============================================================
+// RETURN QTY / REASON
+// ============================================================
+function onRQChange(idx, val) {
+  var qty = parseFloat(val) || 0;
+  var line = lineItems[idx];
+  var invQty = parseFloat(line.invoicedQty) || 0;
+
+  if (invQty > 0 && qty > 0) {
+    // Sum previously saved returns for same customer+SKU+batch+invoice (excl. current GRV)
+    var prevQty = 0;
+    if (selCust && savedGRVs.length) {
+      var curGrvNo = document.getElementById('grvNo').value;
+      for (var d = 0; d < savedGRVs.length; d++) {
+        var sv = savedGRVs[d];
+        if (str(sv['GRV No']) !== curGrvNo &&
+            str(sv['Customer No']) === selCust.customerNumber &&
+            str(sv['Item Code']).toLowerCase() === line.itemCode.toLowerCase() &&
+            str(sv['Batch No']).toLowerCase() === line.batchNo.toLowerCase() &&
+            str(sv['Invoice No']) === line.invoiceNo) {
+          prevQty += parseFloat(sv['Return Qty']) || 0;
+        }
+      }
+    }
+    var remaining = invQty - prevQty;
+    if (qty > remaining) {
+      var msg = '\u26a0 Row ' + (idx+1) + ': Return Qty (' + qty + ') exceeds available balance. ' +
+                'Invoiced: ' + invQty + ', Previously returned: ' + prevQty +
+                ', Remaining: ' + remaining + '.';
+      toast(msg, 'error');
+      // Clamp to remaining and update the input field
+      qty = Math.max(0, remaining);
+      setTimeout(function() {
+        var rows = document.querySelectorAll('#lineBody tr');
+        if (rows[idx]) {
+          var numInputs = rows[idx].querySelectorAll('input[type="number"]');
+          for (var ni = numInputs.length - 1; ni >= 0; ni--) {
+            if (!numInputs[ni].readOnly) { numInputs[ni].value = qty; break; }
+          }
+        }
+      }, 0);
+    }
+  }
+
+  lineItems[idx].returnQty = qty;
+  // Recalculate totals live
+  var totalQty = 0, totalAmt = 0;
+  lineItems.forEach(function(l) {
+    var rq = parseFloat(l.returnQty) || 0;
+    totalQty += rq;
+    totalAmt += rq * (parseFloat(l.unitPrice) || 0);
+  });
+  document.getElementById('sumQty').textContent = totalQty;
+  document.getElementById('sumAmt').textContent = totalAmt.toFixed(2);
+}
+
+// advanceRow: after completing a line, move focus to next row's SKU input
+// or add a new row if this is the last one.
+function advanceRow(idx) {
+  if (idx < lineItems.length - 1) {
+    // Focus existing next row's SKU input
+    setTimeout(function() {
+      var skuInputs = document.querySelectorAll('.sku-lookup-input');
+      if (skuInputs[idx + 1]) skuInputs[idx + 1].focus();
+    }, 60);
+  } else {
+    // Last row — add a new empty row and focus it
+    addEmptyLine(true);
+  }
+}
+
+function onReasonChange(idx, val) {
+  if (lineItems[idx].isExpired) return; // locked — Expired reason cannot be changed
+  lineItems[idx].reason = val;
+  if (!val) return;
+  advanceRow(idx);
+}
+
+function deleteLine(idx) { lineItems.splice(idx,1); renderLines(); }
+
+function clearLines() {
+  if (lineItems.length && !confirm('Clear all line items?')) return;
+  lineItems = [];
+  renderLines();
+}
+
+// ============================================================
+// VALIDATE
+// ============================================================
+function validate() {
+  if (!selCust) { toast('Please select a customer.', 'error'); return false; }
+  if (!lineItems.length) { toast('Add at least one GRV line item.', 'error'); return false; }
+  if (!document.getElementById('grvDate').value) { toast('GRV Date is required.', 'error'); return false; }
+
+  for (var i = 0; i < lineItems.length; i++) {
+    var l = lineItems[i];
+    if (!l.itemCode) { toast('Row ' + (i+1) + ': Scan or enter a Barcode / SKU code.', 'error'); return false; }
+    if (!l.batchNo) { toast('Row ' + (i+1) + ': Batch No is required.', 'error'); return false; }
+    if (!l.invoiceNo) { toast('Row ' + (i+1) + ': Select an invoice (click search \ud83d\udd0d).', 'error'); return false; }
+    if (!l.returnQty || parseFloat(l.returnQty) <= 0) { toast('Row ' + (i+1) + ': Return Qty must be > 0.', 'error'); return false; }
+    if (l.invoicedQty && parseFloat(l.returnQty) > parseFloat(l.invoicedQty)) {
+      toast('Row ' + (i+1) + ': Return Qty exceeds Invoiced Qty. Please correct.', 'error'); return false;
+    }
+    if (!l.reason) { toast('Row ' + (i+1) + ': Reason is required.', 'error'); return false; }
+  }
+
+  // Duplicate within current GRV
+  var keys = {};
+  for (var j = 0; j < lineItems.length; j++) {
+    var ll = lineItems[j];
+    var key = selCust.customerNumber + '|' + ll.itemCode + '|' + ll.batchNo + '|' + ll.invoiceNo;
+    if (keys[key]) { toast('Duplicate line: same SKU + Batch + Invoice on rows ' + (j+1) + '.', 'error'); return false; }
+    keys[key] = true;
+  }
+
+  // Check invoiced qty not exceeded when combining current + previously returned
+  var grvNo = document.getElementById('grvNo').value;
+  for (var k = 0; k < lineItems.length; k++) {
+    var lk = lineItems[k];
+
+    // Sum all previously returned qty for same customer+SKU+batch+invoice (excluding current GRV)
+    var prevReturnedQty = 0;
+    var prevGRVNos = [];
+    for (var d = 0; d < savedGRVs.length; d++) {
+      var sv = savedGRVs[d];
+      if (str(sv['GRV No']) !== grvNo &&
+          str(sv['Customer No']) === selCust.customerNumber &&
+          str(sv['Item Code']).toLowerCase() === lk.itemCode.toLowerCase() &&
+          str(sv['Batch No']).toLowerCase() === lk.batchNo.toLowerCase() &&
+          str(sv['Invoice No']) === lk.invoiceNo) {
+        prevReturnedQty += parseFloat(sv['Return Qty']) || 0;
+        if (prevGRVNos.indexOf(str(sv['GRV No'])) < 0) prevGRVNos.push(str(sv['GRV No']));
+      }
+    }
+
+    // Hard stop: total returned (prev + current) cannot exceed invoiced qty
+    var currentQty = parseFloat(lk.returnQty) || 0;
+    var totalReturned = prevReturnedQty + currentQty;
+    if (lk.invoicedQty && totalReturned > parseFloat(lk.invoicedQty)) {
+      toast(
+        'Row ' + (k+1) + ': Total returned (' + totalReturned + ') exceeds Invoiced Qty (' +
+        lk.invoicedQty + ') for SKU ' + lk.itemCode + ' Batch ' + lk.batchNo +
+        '. Previously returned: ' + prevReturnedQty + '. Reduce Return Qty.',
+        'error'
+      );
+      return false;
+    }
+
+    // Soft warning: same batch+invoice was returned before — ask to confirm but allow proceed
+    if (prevGRVNos.length > 0) {
+      var proceed = confirm(
+        'Warning:\nSKU ' + lk.itemCode + ', Batch ' + lk.batchNo +
+        ', Invoice ' + lk.invoiceNo + ' was already returned in: ' + prevGRVNos.join(', ') +
+        '.\nPreviously returned qty: ' + prevReturnedQty + ' of ' + lk.invoicedQty + ' invoiced.' +
+        '\n\nDo you want to continue with this return?'
+      );
+      if (!proceed) return false;
+    }
+  }
+
+  return true;
+}
+
+// ============================================================
+// SAVE GRV
+// ============================================================
+async function saveGRV() {
+  if (!wb) { toast('Load the Excel workbook first.', 'error'); return; }
+  if (!validate()) return;
+
+  var grvNo      = document.getElementById('grvNo').value;
+  var grvDate    = document.getElementById('grvDate').value;
+  var retDocDate = document.getElementById('returnDocDate').value;
+  var retDocRef  = document.getElementById('returnDocRef').value;
+  var buName     = document.getElementById('buName').value;
+  var remarks    = document.getElementById('remarks').value;
+
+  // Snapshot current GRV for possible printing before clearing
+  var currentLines = lineItems.slice();
+  var currentCust  = selCust;
+
+  var newRows = lineItems.map(function(l) {
+    return {
+      'GRV No':          grvNo,
+      'GRV Date':        fmtDate(grvDate),
+      'Return Doc Date': fmtDate(retDocDate),
+      'Return Doc Ref':  retDocRef,
+      'Customer No':     selCust.customerNumber,
+      'Customer Name':   selCust.customerName,
+      'Location':        selCust.location,
+      'Item Code':       l.itemCode,
+      'Barcode':         l.barcode,
+      'SKU Description': l.description,
+      'Batch No':        l.batchNo,
+      'Expiry Date':     fmtDate(l.expiryDate),
+      'Invoice No':      l.invoiceNo,
+      'Invoice Date':    fmtDate(l.invoiceDate),
+      'Unit Price':      l.unitPrice,
+      'Invoiced Qty':    l.invoicedQty,
+      'Return Qty':      l.returnQty,
+      'Return Amount':   (parseFloat(l.returnQty)||0) * (parseFloat(l.unitPrice)||0),
+      'Reason':          l.reason,
+      'BU Name':         buName,
+      'Remarks':         remarks
+    };
+  });
+
+  var allRows = savedGRVs.concat(newRows);
+  savedGRVs = allRows;
+
+  var ws = XLSX.utils.json_to_sheet(allRows);
+  wb.Sheets['GRVDATA'] = ws;
+  if (wb.SheetNames.indexOf('GRVDATA') < 0) wb.SheetNames.push('GRVDATA');
+
+  // Try silent save via File System Access API
+  var saved = false;
+  if (fileHandle) {
+    try {
+      // Check permission is still granted; re-request if needed (this requires user gesture - we're inside a click handler so it's fine)
+      var permState = await fileHandle.queryPermission({ mode: 'readwrite' });
+      if (permState !== 'granted') {
+        permState = await fileHandle.requestPermission({ mode: 'readwrite' });
+      }
+      if (permState === 'granted') {
+        var writable = await fileHandle.createWritable();
+        var wbOut = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+        await writable.write(new Blob([wbOut], {type:'application/octet-stream'}));
+        await writable.close();
+        saved = true;
+      }
+    } catch(err) {
+      // Silent — fall through to download
+    }
+  }
+  if (!saved) {
+    XLSX.writeFile(wb, 'AlBaironi_GRV_Data.xlsx');
+    toast('\u2705 GRV ' + grvNo + ' saved \u2013 workbook downloaded.', 'success');
+  } else {
+    toast('\u2705 GRV ' + grvNo + ' saved directly to your workbook!', 'success');
+  }
+
+  // Ask user if they want to print before clearing
+  var savedRows = newRows; // snapshot before clearing
+  setTimeout(function() {
+    var wantPrint = confirm('GRV ' + grvNo + ' saved!\n\nDo you want to print this GRV before clearing?');
+    if (wantPrint) {
+      buildAndPrintGRV(savedRows);
+      setTimeout(function() { doResetGRV(); }, 800);
+    } else {
+      doResetGRV();
+    }
+  }, 300);
+}
+
+// ============================================================
+// PRINT MODAL
+// ============================================================
+var allPrintGRVs = [];  // grouped GRV summaries for the print picker
+var selectedPrintGRVNo = null;
+
+function openPrintModal() {
+  selectedPrintGRVNo = null;
+  document.getElementById('printSearchInput').value = '';
+  buildPrintGRVList();
+  document.getElementById('printModal').style.display = 'flex';
+}
+
+function buildPrintGRVList() {
+  // Group savedGRVs by GRV No
+  var grouped = {};
+  savedGRVs.forEach(function(r) {
+    var gno = str(r['GRV No']);
+    if (!gno) return;
+    if (!grouped[gno]) {
+      grouped[gno] = {
+        grvNo:    gno,
+        grvDate:  str(r['GRV Date']),
+        customer: str(r['Customer Name']),
+        lines:    0,
+        amount:   0
+      };
+    }
+    grouped[gno].lines++;
+    grouped[gno].amount += parseFloat(r['Return Amount']) || 0;
+  });
+  allPrintGRVs = Object.values(grouped).sort(function(a,b){
+    return b.grvNo.localeCompare(a.grvNo);
+  });
+  renderPrintList(allPrintGRVs);
+}
+
+function filterPrintList() {
+  var f = document.getElementById('printSearchInput').value.toLowerCase();
+  var filtered = allPrintGRVs.filter(function(g) {
+    return !f || g.grvNo.toLowerCase().indexOf(f) >= 0 || g.customer.toLowerCase().indexOf(f) >= 0;
+  });
+  renderPrintList(filtered);
+}
+
+function renderPrintList(list) {
+  var tbody = document.getElementById('printGrvList');
+  tbody.innerHTML = '';
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="no-data">No saved GRVs found.</td></tr>';
+    return;
+  }
+  list.forEach(function(g) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><input type="radio" name="printGrvRadio" value="' + esc(g.grvNo) + '" onchange="selectedPrintGRVNo=this.value"></td>' +
+      '<td><strong>' + esc(g.grvNo) + '</strong></td>' +
+      '<td>' + esc(g.grvDate) + '</td>' +
+      '<td>' + esc(g.customer) + '</td>' +
+      '<td style="text-align:center">' + g.lines + '</td>' +
+      '<td style="text-align:right">' + g.amount.toFixed(2) + '</td>';
+    tr.onclick = function() {
+      var radio = tr.querySelector('input[type=radio]');
+      radio.checked = true;
+      selectedPrintGRVNo = g.grvNo;
+      document.querySelectorAll('#printGrvList tr').forEach(function(r){ r.classList.remove('sel'); });
+      tr.classList.add('sel');
+    };
+    tbody.appendChild(tr);
+  });
+}
+
+function printSelectedGRV() {
+  if (!selectedPrintGRVNo) { toast('Please select a GRV to print.', 'error'); return; }
+  var rows = savedGRVs.filter(function(r) { return str(r['GRV No']) === selectedPrintGRVNo; });
+  if (!rows.length) { toast('No data found for ' + selectedPrintGRVNo, 'error'); return; }
+  document.getElementById('printModal').style.display = 'none';
+  buildAndPrintGRV(rows);
+}
+
+function printCurrentScreen() {
+  document.getElementById('printModal').style.display = 'none';
+  if (!lineItems.length) { toast('No items on screen to print.', 'error'); return; }
+  if (!selCust) { toast('No customer selected.', 'error'); return; }
+
+  // Build rows from current screen data in same format as savedGRVs
+  var grvNo      = document.getElementById('grvNo').value;
+  var grvDate    = document.getElementById('grvDate').value;
+  var retDocDate = document.getElementById('returnDocDate').value;
+  var retDocRef  = document.getElementById('returnDocRef').value;
+  var buName     = document.getElementById('buName').value;
+  var remarks    = document.getElementById('remarks').value;
+
+  var rows = lineItems.map(function(l) {
+    return {
+      'GRV No':          grvNo,
+      'GRV Date':        grvDate,
+      'Return Doc Date': retDocDate,
+      'Return Doc Ref':  retDocRef,
+      'Customer No':     selCust.customerNumber,
+      'Customer Name':   selCust.customerName,
+      'Location':        selCust.location,
+      'Item Code':       l.itemCode,
+      'Barcode':         l.barcode,
+      'SKU Description': l.description,
+      'Batch No':        l.batchNo,
+      'Expiry Date':     l.expiryDate,
+      'Invoice No':      l.invoiceNo,
+      'Invoice Date':    l.invoiceDate,
+      'Unit Price':      l.unitPrice,
+      'Invoiced Qty':    l.invoicedQty,
+      'Return Qty':      l.returnQty,
+      'Return Amount':   (parseFloat(l.returnQty)||0) * (parseFloat(l.unitPrice)||0),
+      'Reason':          l.reason,
+      'BU Name':         buName,
+      'Remarks':         remarks
+    };
+  });
+  buildAndPrintGRV(rows);
+}
+
+function buildAndPrintGRV(rows) {
+  var r0 = rows[0];
+  var today = todayStr();
+  var totalQty = rows.reduce(function(s,r){ return s+(parseFloat(r['Return Qty'])||0); },0);
+  var totalAmt = rows.reduce(function(s,r){ return s+(parseFloat(r['Return Amount'])||0); },0);
+
+
+  // Build line rows — data row only, barcode inline below value (no separate row)
+  var lineRows = rows.map(function(r,i){
+    var _expDt = str(r['Expiry Date']) ? parseToDate(str(r['Expiry Date'])) : null;
+    if (_expDt) _expDt.setHours(0,0,0,0);
+    var _today0 = new Date(); _today0.setHours(0,0,0,0);
+    var expired = _expDt && _expDt < _today0;
+    var expStyle = expired ? 'color:#c0392b;font-weight:700;' : '';
+    var expiryText = displayDate(str(r['Expiry Date'])) + (expired ? ' <span class="exp-stamp">EXP</span>' : '');
+
+    // Plain cell (barcodes removed)
+    function bcCell(val, style){
+      var s = style||'';
+      return '<td style="vertical-align:top;padding:3px 4px;'+s+'">'+esc(String(val||''))+'</td>';
+    }
+    // Plain cell — no barcode
+    function plainCell(val, style){
+      var s = style||'';
+      return '<td style="vertical-align:top;padding:3px 4px;'+s+'">'+esc(String(val||''))+'</td>';
+    }
+
+    return '<tr>' +
+      '<td style="text-align:center;vertical-align:top;padding:3px 4px;font-size:9px;">'+(i+1)+'</td>' +
+      bcCell(r['Item Code']) +
+      plainCell(r['SKU Description']) +
+      bcCell(r['Batch No']) +
+      '<td style="vertical-align:top;padding:3px 4px;'+expStyle+'">'+expiryText+'</td>' +
+      bcCell(r['Invoice No']) +
+      plainCell(displayDate(str(r['Invoice Date']))) +
+      plainCell(r['Unit Price'], 'text-align:right;') +
+      plainCell(r['Invoiced Qty'], 'text-align:right;') +
+      '<td style="vertical-align:top;padding:3px 4px;text-align:right;font-weight:700;">'+esc(str(r['Return Qty']))+'</td>' +
+      plainCell(r['Reason']) +                  // Reason: plain, no barcode
+    '</tr>';
+  }).join('');
+
+
+
+
+  var html =
+    '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<title>GRV '+esc(str(r0['GRV No']))+'</title>' +
+    '<style>' +
+    '@page{size:A4 landscape;margin:8mm;}' +
+    '@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}' +
+    'body{font-family:"Segoe UI",Arial,sans-serif;font-size:10px;color:#1a2636;margin:0;background:#fff;}' +
+    // Header with company name and control info
+    '.hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1a3a5c;padding:6px 0;margin-bottom:6px;}' +
+    '.hdr h2{font-size:13px;margin:0;font-weight:700;color:#1a3a5c;}' +
+    '.hdr-right{display:flex;gap:20px;align-items:center;font-size:9px;}' +
+    '.ctrl-doc{color:#666;text-align:right;}' +
+    '.ctrl-doc label{display:block;font-size:8px;font-weight:700;color:#777;text-transform:uppercase;margin-bottom:1px;}' +
+    '.ctrl-doc .val{font-size:9px;color:#000;font-weight:700;}' +
+    '.pdate{color:#666;}' +
+    '.pdate label{display:block;font-size:8px;font-weight:700;color:#777;text-transform:uppercase;margin-bottom:1px;}' +
+    '.pdate .val{font-size:9px;color:#000;font-weight:700;}' +
+    // Info grid — 4 columns
+    '.info{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 12px;margin-bottom:6px;padding:6px 10px;}' +
+    '.info-item label{font-size:8px;font-weight:700;color:#6b7c93;text-transform:uppercase;display:block;margin-bottom:2px;letter-spacing:0.3px;}' +
+    '.info-item .val{font-size:10px;font-weight:700;color:#1a2636;}' +
+    // Barcodes section — 3 columns with Remarks
+    '.hdr-bc-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:6px;padding:6px 10px;border:1px solid #d0d9e4;border-radius:3px;background:#f8fafd;}' +
+    '.hdr-bc-item{display:flex;flex-direction:column;gap:2px;}' +
+    '.hdr-bc-item label{font-size:8px;font-weight:700;color:#6b7c93;text-transform:uppercase;letter-spacing:0.3px;}' +
+    '.hdr-bc-item .val{font-size:10px;font-weight:700;color:#1a2636;margin-bottom:2px;}' +
+    '.hdr-bc-item.remarks .val{font-size:9px;font-weight:600;color:#1a2636;line-height:1.3;max-height:38px;overflow:hidden;}' +
+
+    // Table styling — NO GRID LINES, upper aligned text
+    'table{width:100%;border-collapse:collapse;font-size:9px;table-layout:fixed;}' +
+    'thead th{background:#e8f0f8;color:#1a3a5c;padding:5px 6px;text-align:left;font-size:8px;font-weight:700;text-transform:uppercase;border-bottom:2px solid #1a3a5c;letter-spacing:0.3px;}' +
+    'tbody td{border-bottom:none;border-right:none;padding:4px 6px;font-size:9px;word-break:break-word;vertical-align:top;}' +
+    'tbody tr:nth-child(odd) td{background:#fff;}' +
+    'tbody tr:nth-child(even) td{background:#f8fafd;}' +
+    '.exp-wrapper{position:relative;display:inline-block;}' +
+    '.exp-stamp{display:inline-block;background:#c0392b;color:#fff;font-weight:700;font-size:7px;padding:2px 4px;margin-left:2px;text-transform:uppercase;border-radius:2px;vertical-align:middle;}' +
+    // Summary
+    '.summary{display:flex;gap:12px;margin-top:6px;font-size:9px;}' +
+    '.sum-item{border:1px solid #d0d9e4;border-radius:3px;padding:4px 12px;background:#f5f7fb;}' +
+    '.sum-item strong{color:#1a3a5c;font-weight:700;}' +
+    '.footer{margin-top:8px;font-size:8px;color:#999;text-align:center;border-top:1px solid #e8edf4;padding-top:3px;}' +
+    '</style></head><body>' +
+
+    // Header with Control Doc Ref and Print Date
+    '<div class="hdr">' +
+      '<h2>Al Baironi Trading &amp; Distribution – Goods Return Voucher</h2>' +
+      '<div class="hdr-right">' +
+        '<div class="ctrl-doc"><label>Control Doc Ref</label><div class="val">ABQAT/WHS/007/I</div></div>' +
+        '<div class="pdate"><label>Printed</label><div class="val">'+todayDisplay()+'</div></div>' +
+      '</div>' +
+    '</div>' +
+
+    // Document info grid (4 columns)
+    '<div class="info">' +
+      '<div class="info-item"><label>GRV Number</label><div class="val">'+esc(str(r0['GRV No']))+'</div></div>' +
+      '<div class="info-item"><label>GRV Date</label><div class="val">'+esc(displayDate(str(r0['GRV Date'])))+'</div></div>' +
+      '<div class="info-item"><label>Return Doc Ref</label><div class="val">'+esc(str(r0['Return Doc Ref']))+'</div></div>' +
+      '<div class="info-item"><label>Document Date</label><div class="val">'+esc(displayDate(str(r0['Return Doc Date'])))+'</div></div>' +
+      '<div class="info-item"><label>Customer No</label><div class="val">'+esc(str(r0['Customer No']))+'</div></div>' +
+      '<div class="info-item"><label>Customer Name</label><div class="val">'+esc(str(r0['Customer Name']))+'</div></div>' +
+      '<div class="info-item"><label>Location</label><div class="val">'+esc(str(r0['Location']))+'</div></div>' +
+      '<div class="info-item"><label>Business Unit</label><div class="val">'+esc(str(r0['BU Name']))+'</div></div>' +
+      '<div class="info-item" style="grid-column:span 4"><label>Remarks</label><div class="val">'+esc(str(r0['Remarks']))+'</div></div>' +
+    '</div>' +
+
+
+    // Line items table with adjusted columns
+    '<table><thead><tr>' +
+      '<th style="width:14px">#</th>' +
+      '<th style="width:80px">SKU Code</th>' +
+      '<th style="width:130px">SKU Name</th>' +
+      '<th style="width:65px">Batch No</th>' +
+      '<th style="width:70px">Expiry Date</th>' +
+      '<th style="width:70px">Invoice No</th>' +
+      '<th style="width:65px">Invoice Date</th>' +
+      '<th style="width:35px">Price</th>' +
+      '<th style="width:38px">Inv Qty</th>' +
+      '<th style="width:38px">Ret Qty</th>' +
+      '<th style="width:55px">Reason</th>' +
+    '</tr></thead><tbody>'+lineRows+'</tbody></table>' +
+
+    '<div class="summary">' +
+      '<div class="sum-item">Lines: <strong>'+rows.length+'</strong></div>' +
+      '<div class="sum-item">Total Return Qty: <strong>'+totalQty+'</strong></div>' +
+      '<div class="sum-item">Total GRV Amount: <strong>'+totalAmt.toFixed(2)+'</strong></div>' +
+    '</div>' +
+    '<div class="footer">Al Baironi Trading &amp; Distribution — '+str(r0['GRV No'])+' — '+todayDisplay()+'</div>' +
+
+    '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>' +
+    '</body></html>';
+
+  var pw = window.open('','_blank','width=1200,height=800');
+  if (pw){ pw.document.write(html); pw.document.close(); }
+  else { toast('Pop-up blocked \u2013 please allow pop-ups for this page.','warn'); }
+}
+
+// ============================================================
+// PRINT & RESET
+// ============================================================
+function doResetGRV() {
+  lineItems = [];
+  selCust = null;
+  ['custNoInput','custName','custLoc','buName','remarks','returnDocRef','returnDocDate'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+  renderLines();
+  if (wb) setNextGRVNo();
+}
+
+function resetGRV() {
+  if (!confirm('Start a new GRV? Current entries will be cleared.')) return;
+  doResetGRV();
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type) {
+  type = type || 'info';
+  var wrap = document.getElementById('toastWrap');
+  var t = document.createElement('div');
+  t.className = 'toast toast-' + type;
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 4500);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function() {
+  var today = todayStr();
+  document.getElementById('grvDate').value = today;
+  document.getElementById('returnDocDate').value = today;
+  document.getElementById('grvNo').value = 'GRV-1001';
+})();
+</script>
+</body>
+</html>
